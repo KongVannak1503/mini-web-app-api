@@ -65,13 +65,13 @@ exports.registerUser = async (req, res) => {
             createdBy: req.user?._id,
         });
 
-        await newUser.save();
-        await newUser.populate('image_url', 'path');
 
+        const getUser = await newUser.save();
+        const getUsers = await User.findById(getUser._id).populate('image_url', 'path').select('-password');
         const userObj = newUser.toObject();
         delete userObj.password;
 
-        res.status(201).json({ message: 'User created', data: userObj });
+        res.status(201).json({ message: 'User created', data: getUsers });
     } catch (err) {
         console.error('Create Error:', err);
         res.status(500).json({ message: 'Internal server error' });
